@@ -1,22 +1,39 @@
 <template>
-  <div id="app">
-    <h1>Socket Test</h1>
-    <h2>Message: {{ message }}, {{ date }}</h2>
-    <button @click="send()">
-      Send
-    </button>
+  <div id="app" class="mb-4">
+    <Header />
+    <div class="container">
+      <h1>InterdependentTeams</h1>
+      <SetUp v-if="currentTab == 'setup'" :socket="socket" />
+    </div>
   </div>
 </template>
 
 <script>
 import io from 'socket.io-client'
 
+import params from './lib/params.js'
+
+import Header from './components/Header.vue'
+import SetUp from './components/SetUp.vue'
+
 export default {
   name: 'App',
+  components: {
+    Header,
+    SetUp
+  },
   data() {
     return {
       date: '',
       message: ''
+    }
+  },
+  computed: {
+    isHost() {
+      return this.$store.getters.getHost
+    },
+    currentTab() {
+      return this.$store.getters.getCurrentTab
     }
   },
   created() {
@@ -29,12 +46,16 @@ export default {
     console.log('Connecting to: ' + connStr)
     this.socket = io(connStr)
 
-    const self = this
-    this.socket.on('testMessage', (data) => {
+    if (params.isParam('host')) {
+      this.$store.dispatch('updateHost', true)
+    }
+
+    this.socket.on('loadOrganisations', (data) => {
       console.log(data)
-      self.date = data.date
-      self.message = data.message
+      this.$store.dispatch('loadOrganisations', data)
     })
+
+    this.socket.emit('loadOrganisations')
   },
   methods: {
     send() {
