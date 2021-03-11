@@ -17,8 +17,8 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item" :class="{ active: currentTab == 'test' }">
-          <a class="nav-link pointer" @click="updateTab('test')">Test</a>
+        <li class="nav-item" :class="{ active: currentTab == 'game' }">
+          <a class="nav-link pointer" @click="updateTab('game')">Game</a>
         </li>
         <li v-if="isHost" class="nav-item" :class="{ active: currentTab == 'setup' }">
           <a class="nav-link pointer" @click="updateTab('setup')">Set Up</a>

@@ -2,8 +2,12 @@
   <div id="app" class="mb-4">
     <Header />
     <div class="container">
-      <h1>InterdependentTeams</h1>
+      <h1>Interdependent Teams</h1>
       <SetUp v-if="currentTab == 'setup'" :socket="socket" />
+      <div v-if="currentTab != 'setup'">
+        <SetGame :socket="socket" />
+        <Board :socket="socket" />
+      </div>
     </div>
   </div>
 </template>
@@ -15,12 +19,16 @@ import params from './lib/params.js'
 
 import Header from './components/Header.vue'
 import SetUp from './components/SetUp.vue'
+import SetGame from './components/SetGame.vue'
+import Board from './components/Board.vue'
 
 export default {
   name: 'App',
   components: {
     Header,
-    SetUp
+    SetUp,
+    SetGame,
+    Board
   },
   data() {
     return {
@@ -34,6 +42,9 @@ export default {
     },
     currentTab() {
       return this.$store.getters.getCurrentTab
+    },
+    columns() {
+      return this.$store.getters.getColumns
     }
   },
   created() {

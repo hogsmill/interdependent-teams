@@ -1,6 +1,14 @@
 
 const { v4: uuidv4 } = require('uuid')
 
+const columns = [
+  {name: 'design'},
+  {name: 'develop'},
+  {name: 'test'},
+  {name: 'deploy'},
+  {name: 'done'}
+]
+
 function _loadOrganisations(db, io) {
   db.collection('interdependentTeamsOrganisations').find().toArray(function(err, res) {
     if (err) throw err
@@ -66,7 +74,8 @@ module.exports = {
         const teams = res.teams ? res.teams : []
         teams.push({
           id: uuidv4(),
-          name: data.team
+          name: data.team,
+          columns: columns
         })
         db.collection('interdependentTeamsOrganisations').updateOne({id: data.organisationId}, {$set: {teams: teams}}, function(err, res) {
           if (err) throw err

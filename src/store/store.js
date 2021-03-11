@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state: {
     host: false,
-    currentTab: 'test',
+    currentTab: 'game',
     thisGame: 'Interdependenet Teams',
     organisations: [],
     editingOrganisationId: ''
@@ -20,6 +20,9 @@ export const store = new Vuex.Store({
     },
     getThisGame: (state) => {
       return state.thisGame
+    },
+    getColumns: (state) => {
+      return state.columns
     },
     getOrganisations: (state) => {
       return state.organisations

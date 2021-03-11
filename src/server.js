@@ -67,13 +67,6 @@ function emit(event, data) {
   io.emit(event, data)
 }
 
-function emit(event, data) {
-  if (debugOn) {
-    console.log(event, data, '(emit)')
-  }
-  io.emit(event, data)
-}
-
 MongoClient.connect(url, { useUnifiedTopology: true, maxIdleTimeMS: maxIdleTime }, function (err, client) {
   if (err) throw err
   const db = client.db('db')
@@ -107,7 +100,7 @@ MongoClient.connect(url, { useUnifiedTopology: true, maxIdleTimeMS: maxIdleTime 
     socket.on('addTeam', (data) => { dbStore.addTeam(db, io, data, debugOn) })
 
     socket.on('updateTeam', (data) => { dbStore.updateTeam(db, io, data, debugOn) })
-    
+
     socket.on('deleteTeam', (data) => { dbStore.deleteTeam(db, io, data, debugOn) })
 
   })
