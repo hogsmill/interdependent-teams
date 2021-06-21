@@ -3,19 +3,26 @@
     <tr>
       <td>
         <h4>Organisations</h4>
-        <i v-if="showTestOrganisations" @click="setShowTestOrganisations(false)" title="collapse" class="fas fa-caret-up toggle" />
-        <i v-if="!showTestOrganisations" @click="setShowTestOrganisations(true)" title="expand" class="fas fa-caret-down toggle" />
+        <i v-if="showOrganisations" @click="setShowOrganisations(false)" title="collapse" class="fas fa-caret-up toggle" />
+        <i v-if="!showOrganisations" @click="setShowOrganisations(true)" title="expand" class="fas fa-caret-down toggle" />
       </td>
     </tr>
-    <tr v-if="showTestOrganisations">
+    <tr v-if="showOrganisations">
       <td>
         <table>
           <tr>
-            <td colspan="2">
+            <td colspan="3">
               New Organisation <input type="text" class="new-organisation" id="new-organisation">
               <button class="btn btn-sm btn-site-primary" @click="addOrganisation()">
                 Add
               </button>
+            </td>
+          </tr>
+          <tr>
+            <td />
+            <td />
+            <td class="center">
+              Hard Policy<br>Enforcement?
             </td>
           </tr>
           <tr v-for="(organisation, index) in organisations" :key="index">
@@ -26,6 +33,9 @@
             <td>
               <input type="text" :value="organisation.name" :id="'organisation-' + organisation.id">
             </td>
+            <td class="center">
+              <input type="checkbox" :checked="organisation.hardPolicyEnforcement" @click="togglePolicyEnforcement(organisation.id)">
+            </td>
           </tr>
         </table>
       </td>
@@ -34,13 +44,12 @@
 </template>
 
 <script>
+import bus from '../../socket.js'
+
 export default {
-  props: [
-    'socket'
-  ],
   data() {
     return {
-      showTestOrganisations: false,
+      showOrganisations: false,
       currentOrganisation: ''
     }
   },
@@ -50,15 +59,15 @@ export default {
     }
   },
   methods: {
-    setShowTestOrganisations(val) {
-      this.showTestOrganisations = val
+    setShowOrganisations(val) {
+      this.showOrganisations = val
     },
     addOrganisation() {
       const organisation = document.getElementById('new-organisation').value
       if (!organisation) {
         alert('Please enter a value')
       } else {
-        this.socket.emit('addOrganisation', {organisation: organisation})
+        bus.$emit('sendAddOrganisation', {organisation: organisation})
         document.getElementById('new-organisation').value = ''
       }
     },
@@ -67,11 +76,14 @@ export default {
       if (!organisation) {
         alert('Please enter a value')
       } else {
-        this.socket.emit('updateOrganisation', {organisationId: id, organisation: organisation})
+        bus.$emit('sendUpdateOrganisation', {organisationId: id, organisation: organisation})
       }
     },
     deleteOrganisation(id) {
-      this.socket.emit('deleteOrganisation', {organisationId: id})
+      bus.$emit('sendDeleteOrganisation', {organisationId: id})
+    },
+    togglePolicyEnforcement(id) {
+      bus.$emit('sendTogglePolicyEnforcement', {organisationId: id})
     }
   }
 }

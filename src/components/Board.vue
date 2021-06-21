@@ -1,26 +1,22 @@
 <template>
   <div class="board">
+    <BoardHeader />
+    <Players />
     <table>
-      <thead>
+      <thead class="board-header">
         <tr>
           <th>
-            Backlog
+            Our Work
           </th>
           <th>
             Other Teams
-          </th>
-          <th v-for="(column, index) in columns" :key="index">
-            {{ column.name }}
           </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <Backlog :socket="socket" />
-          <OtherTeams :socket="socket" />
-          <td v-for="(column, index) in columns" :key="index">
-            <Column :column="column" :socket="socket" />
-          </td>
+          <ThisTeam />
+          <OtherTeams />
         </tr>
       </tbody>
     </table>
@@ -28,19 +24,18 @@
 </template>
 
 <script>
-import Backlog from './board/Backlog.vue'
+import BoardHeader from './board/BoardHeader.vue'
+import Players from './board/Players.vue'
+import ThisTeam from './board/ThisTeam.vue'
 import OtherTeams from './board/OtherTeams.vue'
-import Column from './board/Column.vue'
 
 export default {
   components: {
-    Backlog,
-    OtherTeams,
-    Column
+    BoardHeader,
+    Players,
+    ThisTeam,
+    OtherTeams
   },
-  props: [
-    'socket'
-  ],
   computed: {
     columns() {
       return this.$store.getters.getColumns
@@ -74,15 +69,16 @@ export default {
   table {
     margin: 0 auto;
 
-    th {
-      background-color: #fff;
-      color: #444;
+    .board-header {
+      th {
+        font-size: x-large;
+        padding: 16px 0 0 0;
+      }
     }
-    
+
     th, td {
       width: 10%;
       padding: 6px;
-      border: 1px solid;
     }
   }
 }

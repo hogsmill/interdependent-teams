@@ -89,20 +89,39 @@ MongoClient.connect(url, { useUnifiedTopology: true, maxIdleTimeMS: maxIdleTime 
       emit('updateConnections', {connections: connections, maxConnections: maxConnections})
     })
 
-    socket.on('loadOrganisations', () => { dbStore.loadOrganisations(db, io, debugOn) })
+    socket.on('sendCheckDemoOrganisation', () => { dbStore.checkDemoOrganisation(db, io, debugOn) })
 
-    socket.on('addOrganisation', (data) => { dbStore.addOrganisation(db, io, data, debugOn) })
+    socket.on('sendLoadOrganisations', () => { dbStore.loadOrganisations(db, io, debugOn) })
 
-    socket.on('updateOrganisation', (data) => { dbStore.updateOrganisation(db, io, data, debugOn) })
+    socket.on('sendMakeCaptain', (data) => { dbStore.makeCaptain(db, io, data, debugOn) })
 
-    socket.on('deleteOrganisation', (data) => { dbStore.deleteOrganisation(db, io, data, debugOn) })
+    socket.on('sendSetPolicy', (data) => { dbStore.setPolicy(db, io, data, debugOn) })
 
-    socket.on('addTeam', (data) => { dbStore.addTeam(db, io, data, debugOn) })
+    socket.on('sendStartGame', (data) => { dbStore.startGame(db, io, data, debugOn) })
 
-    socket.on('updateTeam', (data) => { dbStore.updateTeam(db, io, data, debugOn) })
+    socket.on('sendPullInCard', (data) => { dbStore.pullInCard(db, io, data, debugOn) })
 
-    socket.on('deleteTeam', (data) => { dbStore.deleteTeam(db, io, data, debugOn) })
+    socket.on('sendTogglePolicyEnforcement', (data) => { dbStore.togglePolicyEnforcement(db, io, data, debugOn) })
 
+    // Set up
+
+    socket.on('sendAddOrganisation', (data) => { dbStore.addOrganisation(db, io, data, debugOn) })
+
+    socket.on('sendUpdateOrganisation', (data) => { dbStore.updateOrganisation(db, io, data, debugOn) })
+
+    socket.on('sendDeleteOrganisation', (data) => { dbStore.deleteOrganisation(db, io, data, debugOn) })
+
+    socket.on('sendAddTeam', (data) => { dbStore.addTeam(db, io, data, debugOn) })
+
+    socket.on('sendUpdateTeam', (data) => { dbStore.updateTeam(db, io, data, debugOn) })
+
+    socket.on('sendDeleteTeam', (data) => { dbStore.deleteTeam(db, io, data, debugOn) })
+
+    socket.on('sendAddPlayer', (data) => { dbStore.addPlayer(db, io, data, debugOn) })
+
+    socket.on('sendUpdatePlayer', (data) => { dbStore.updatePlayer(db, io, data, debugOn) })
+
+    socket.on('sendDeletePlayer', (data) => { dbStore.deletePlayer(db, io, data, debugOn) })
   })
 })
 

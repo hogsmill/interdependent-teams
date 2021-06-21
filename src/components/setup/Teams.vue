@@ -47,10 +47,9 @@
 </template>
 
 <script>
+import bus from '../../socket.js'
+
 export default {
-  props: [
-    'socket'
-  ],
   data() {
     return {
       showTeams: false
@@ -80,7 +79,7 @@ export default {
       if (!team) {
         alert('Please enter a value')
       } else {
-        this.socket.emit('addTeam', {organisationId: this.editingOrganisationId, team: team})
+        bus.$emit('sendAddTeam', {organisationId: this.editingOrganisationId, team: team})
         document.getElementById('new-team').value = ''
       }
     },
@@ -89,11 +88,11 @@ export default {
       if (!team) {
         alert('Please enter a value')
       } else {
-        this.socket.emit('updateTeam', {organisationId: this.editingOrganisationId, teamId: id, team: team})
+        bus.$emit('sendUpdateTeam', {organisationId: this.editingOrganisationId, teamId: id, team: team})
       }
     },
     deleteTeam(id) {
-      this.socket.emit('deleteTeam', {organisationId: this.editingOrganisationId, teamId: id})
+      bus.$emit('sendDeleteTeam', {organisationId: this.editingOrganisationId, teamId: id})
     }
   }
 }

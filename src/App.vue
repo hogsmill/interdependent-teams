@@ -2,24 +2,27 @@
   <div id="app" class="mb-4">
     <Header />
     <div class="container">
-      <h1>Interdependent Teams</h1>
-      <SetUp v-if="currentTab == 'setup'" :socket="socket" />
+      <SetUp v-if="currentTab == 'setup'" />
       <div v-if="currentTab != 'setup'">
-        <SetGame :socket="socket" />
-        <Board :socket="socket" />
+        <SetGame />
+        <MakeCaptain v-if="myName.id" />
+        <SetPolicy v-if="myName.captain" />
+        <Board />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import io from 'socket.io-client'
+import bus from './socket.js'
 
 import params from './lib/params.js'
 
 import Header from './components/Header.vue'
 import SetUp from './components/SetUp.vue'
 import SetGame from './components/SetGame.vue'
+import MakeCaptain from './components/MakeCaptain.vue'
+import SetPolicy from './components/SetPolicy.vue'
 import Board from './components/Board.vue'
 
 export default {
@@ -28,6 +31,8 @@ export default {
     Header,
     SetUp,
     SetGame,
+    MakeCaptain,
+    SetPolicy,
     Board
   },
   data() {
@@ -43,35 +48,63 @@ export default {
     currentTab() {
       return this.$store.getters.getCurrentTab
     },
-    columns() {
-      return this.$store.getters.getColumns
+    organisations() {
+      return this.$store.getters.getOrganisations
+    },
+    team() {
+      return this.$store.getters.getTeam
+    },
+    myName() {
+      return this.$store.getters.getMyName
     }
   },
   created() {
-    let connStr
-    if (location.hostname == 'localhost') {
-      connStr = 'http://localhost:3017'
-    } else {
-      connStr = 'https://agilesimulations.co.uk:3017'
-    }
-    console.log('Connecting to: ' + connStr)
-    this.socket = io(connStr)
-
     if (params.isParam('host')) {
       this.$store.dispatch('updateHost', true)
     }
 
-    this.socket.on('loadOrganisations', (data) => {
-      console.log(data)
+    bus.$on('loadOrganisations', (data) => {
+      let organisation = params.getParam('organisation')
+      if (organisation) {
+        data.organisationFromUrl = organisation
+      }
+      const team = params.getParam('team')
+      if (team) {
+        data.teamFromUrl = team
+      }
       this.$store.dispatch('loadOrganisations', data)
+      const organisationId = localStorage.getItem('organisationId-it')
+      let teamId = localStorage.getItem('teamId-it')
+      const myNameId = localStorage.getItem('myNameId-it')
+      if (organisationId) {
+        this.$store.dispatch('setOrganisationId', organisationId)
+        organisation = data.find(function(o) {
+          return o.id == organisationId
+        })
+      }
+      if (organisation && teamId) {
+        const team = organisation.teams.find(function(t) {
+          return t.id == teamId
+        })
+        if (team) {
+          this.$store.dispatch('setTeamId', teamId)
+        } else {
+          teamId = null
+        }
+      }
+      if (teamId && myNameId) {
+        const myName = this.team.players.find(function(p) {
+          return p.id == myNameId
+        })
+        if (myName) {
+          this.$store.dispatch('setMyName', myName)
+        }
+      }
     })
 
-    this.socket.emit('loadOrganisations')
+    bus.$emit('sendCheckDemoOrganisation')
   },
   methods: {
-    send() {
-      this.socket.emit('testMessage', {message: 'Hello World!'})
-    }
   }
 }
 </script>

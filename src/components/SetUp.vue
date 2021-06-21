@@ -1,28 +1,30 @@
 <template>
   <div>
-    <Organisations :socket="socket" />
-    <Teams :socket="socket" />
+    <Organisations />
+    <Teams />
+    <Players />
   </div>
 </template>
 
 <script>
 import Organisations from './setup/Organisations.vue'
 import Teams from './setup/Teams.vue'
+import Players from './setup/Players.vue'
 
 export default {
   components: {
     Organisations,
-    Teams
+    Teams,
+    Players
+
   },
-  props: [
-    'socket'
-  ]
 }
 </script>
 
 <style lang="scss">
 .config-organisations,
-.config-teams {
+.config-teams,
+.config-players {
   width: 100%;
   margin: 12px;
   border: 1px solid #ccc;

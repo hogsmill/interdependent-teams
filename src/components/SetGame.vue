@@ -1,10 +1,11 @@
 <template>
   <span class="game-name">
+
     <button class="btn btn-sm btn-secondary mb-2" @click="show()">
       Set Up Game
     </button>
 
-    <modal name="set-game" :height="400" :classes="['rounded', 'set-game']">
+    <modal name="set-game" :height="260" :width="440" :classes="['rounded', 'set-game']">
       <div class="float-right mr-2 mt-1">
         <button type="button" class="close" @click="hide" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -14,25 +15,24 @@
         <h3>
           Set Up Game
         </h3>
-        <!--
         <table>
           <tr>
             <td>
-              Workshop
+              Organisation
             </td>
             <td>
-              <div v-if="!workshopUrl">
-                <select id="workshop-name" @click="setWorkshop()">
+              <div v-if="!organisationFromUrl">
+                <select id="organisation" @change="setOrganisation()">
                   <option value="">
                     -- Select --
                   </option>
-                  <option v-for="(wshop, index) in workshops" :key="index" :selected="wshop.workshopName == workshopName">
-                    {{ wshop.workshopName }}
+                  <option v-for="(org, index) in organisations" :key="index" :selected="organisationId && org.id == organisationId" :value="org.id">
+                    {{ org.name }}
                   </option>
                 </select>
               </div>
-              <div v-if="workshopUrl">
-                <b>{{ workshopUrl }}</b>
+              <div v-if="organisationFromUrl">
+                <b>{{ organisationFromUrl }}</b>
               </div>
             </td>
           </tr>
@@ -41,18 +41,18 @@
               Team
             </td>
             <td>
-              <div v-if="!gameUrl">
-                <select id="game-name" v-if="workshop.games" @change="setGame()">
+              <div v-if="!teamFromUrl">
+                <select v-if="organisationId" id="team" @change="setTeam()">
                   <option value="">
                     -- Select --
                   </option>
-                  <option v-for="(game, index) in workshop.games" :key="index" :selected="game.gameName == gameName">
-                    {{ game.gameName }}
+                  <option v-for="(t, index) in organisation.teams" :key="index" :selected="t.id == teamId" :value="t.id">
+                    {{ t.name }}
                   </option>
                 </select>
               </div>
-              <div v-if="gameUrl">
-                <b>{{ gameUrl }}</b>
+              <div v-if="teamFromUrl">
+                <b>{{ teamFromUrl }}</b>
               </div>
             </td>
           </tr>
@@ -62,11 +62,11 @@
             </td>
             <td>
               <div>
-                <select id="my-name" v-if="players.length" @change="setMyName()">
+                <select id="my-name" v-if="teamId && team.players.length" @change="setMyName()">
                   <option value="">
                     -- Select --
                   </option>
-                  <option v-for="(player, index) in players" :key="index" :selected="player.id == myName.id" :value="player.id">
+                  <option v-for="(player, index) in team.players" :key="index" :selected="player.id == myName.id" :value="player.id">
                     {{ player.name }}
                   </option>
                 </select>
@@ -74,43 +74,45 @@
             </td>
           </tr>
         </table>
-        -->
         <button class="btn btn-sm btn-secondary smaller-font" @click="hide()">
           Done
         </button>
       </div>
     </modal>
+
   </span>
 </template>
 
 <script>
+import bus from '../socket.js'
+
 import params from '../lib/params.js'
 
 export default {
-  props: [
-    'socket'
-  ],
   data() {
     return {
-      workshopUrl: '',
-      gameUrl: ''
+      organisationFromUrl: null,
+      teamFromUrl: null
     }
   },
   computed: {
     showTab() {
       return this.$store.getters.getShowTab
     },
-    workshops() {
-      return this.$store.getters.getWorkshops
+    organisations() {
+      return this.$store.getters.getOrganisations
     },
-    workshop() {
-      return this.$store.getters.getWorkshop
+    organisationId() {
+      return this.$store.getters.getOrganisationId
     },
-    workshopName() {
-      return this.$store.getters.getWorkshopName
+    organisation() {
+      return this.$store.getters.getOrganisation
     },
-    gameName() {
-      return this.$store.getters.getGameName
+    teamId() {
+      return this.$store.getters.getTeamId
+    },
+    team() {
+      return this.$store.getters.getTeam
     },
     players() {
       return this.$store.getters.getPlayers
@@ -120,45 +122,35 @@ export default {
     }
   },
   created() {
-    this.workshopUrl = params.getParam('workshop')
-    this.gameUrl = params.getParam('game')
-    if (this.gameUrl) {
-      this.workshopUrl = 'None (Single team Game)'
+    this.organisationFromUrl = params.getParam('organisation')
+    if (this.organisationFromUrl) {
+      this.teamFromUrl = params.getParam('team')
     }
   },
   methods: {
     show() {
-      this.socket.emit('loadWorkshops')
+      bus.$emit('sendLoadOrganisations')
       this.$modal.show('set-game')
     },
     hide() {
       this.$modal.hide('set-game')
     },
-    setWorkshop() {
-      const workshop = this.workshopUrl ? this.workshopUrl : document.getElementById('workshop-name').value
-      localStorage.setItem('workshopName-cg', workshop)
-      this.$store.dispatch('updateWorkshopName', workshop)
-      this.$store.dispatch('updateGameName', '')
-      this.$store.dispatch('setMyName', '')
-      this.$store.dispatch('clearPlayers')
-      if (!workshop) {
-        this.$store.dispatch('updateWorkshop', false)
-      } else {
-        this.socket.emit('loadWorkshop', {workshopName: workshop})
-      }
+    setOrganisation() {
+      const organisationId = document.getElementById('organisation').value
+      localStorage.setItem('organisationId-it', organisationId)
+      this.$store.dispatch('setOrganisationId', organisationId)
     },
-    setGame() {
-      const gameName = this.gameUrl ? this.gameUrl : document.getElementById('game-name').value
-      localStorage.setItem('gameName-cg', gameName)
-      this.$store.dispatch('updateGameName', gameName)
-      this.socket.emit('loadGame', { workshopName: this.workshopName, gameName: gameName })
+    setTeam() {
+      const teamId = document.getElementById('team').value
+      localStorage.setItem('teamId-it', teamId)
+      this.$store.dispatch('setTeamId', teamId)
     },
     setMyName() {
-      const id = document.getElementById('my-name').value
-      const myName = this.players.find(function(p) {
-        return p.id == id
+      const myNameId = document.getElementById('my-name').value
+      const myName = this.team.players.find(function(p) {
+        return p.id == myNameId
       })
-      localStorage.setItem('myName-cg', JSON.stringify(myName))
+      localStorage.setItem('myNameId-it', myName.id)
       this.$store.dispatch('setMyName', myName)
     }
   }
