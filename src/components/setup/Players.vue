@@ -102,7 +102,7 @@ export default {
       if (!player) {
         alert('Please enter a value')
       } else {
-        bus.$emit('sendAddPlayer', {organisationId: this.editingOrganisationId, teamId: this.editingTeamId, player: player})
+        bus.emit('sendAddPlayer', {organisationId: this.editingOrganisationId, teamId: this.editingTeamId, player: player})
         document.getElementById('new-player').value = ''
       }
     },
@@ -111,11 +111,11 @@ export default {
       if (!player) {
         alert('Please enter a value')
       } else {
-        bus.$emit('sendUpdatePlayer', {organisationId: this.editingOrganisationId, teamId: this.editingTeamId, playerId: id, player: player})
+        bus.emit('sendUpdatePlayer', {organisationId: this.editingOrganisationId, teamId: this.editingTeamId, playerId: id, player: player})
       }
     },
     deletePlayer(id) {
-      bus.$emit('sendDeletePlayer', {organisationId: this.editingOrganisationId, teamId: this.editingTeamId, playerId: id})
+      bus.emit('sendDeletePlayer', {organisationId: this.editingOrganisationId, teamId: this.editingTeamId, playerId: id})
     }
   }
 }

@@ -26,7 +26,7 @@ export default {
       const myName = this.myName
       myName.captain = true
       this.$store.dispatch('setMyName', myName)
-      bus.$emit('sendMakeCaptain', {organisationId: this.organisationId, teamId: this.teamId, player: this.myName})
+      bus.emit('sendMakeCaptain', {organisationId: this.organisationId, teamId: this.teamId, player: this.myName})
     }
   }
 }

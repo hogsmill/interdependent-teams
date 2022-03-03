@@ -79,7 +79,7 @@ export default {
       if (!team) {
         alert('Please enter a value')
       } else {
-        bus.$emit('sendAddTeam', {organisationId: this.editingOrganisationId, team: team})
+        bus.emit('sendAddTeam', {organisationId: this.editingOrganisationId, team: team})
         document.getElementById('new-team').value = ''
       }
     },
@@ -88,11 +88,11 @@ export default {
       if (!team) {
         alert('Please enter a value')
       } else {
-        bus.$emit('sendUpdateTeam', {organisationId: this.editingOrganisationId, teamId: id, team: team})
+        bus.emit('sendUpdateTeam', {organisationId: this.editingOrganisationId, teamId: id, team: team})
       }
     },
     deleteTeam(id) {
-      bus.$emit('sendDeleteTeam', {organisationId: this.editingOrganisationId, teamId: id})
+      bus.emit('sendDeleteTeam', {organisationId: this.editingOrganisationId, teamId: id})
     }
   }
 }

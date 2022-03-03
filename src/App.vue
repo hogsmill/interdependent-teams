@@ -10,6 +10,7 @@
         <Board />
       </div>
     </div>
+    <Modals />
   </div>
 </template>
 
@@ -24,6 +25,7 @@ import SetGame from './components/SetGame.vue'
 import MakeCaptain from './components/MakeCaptain.vue'
 import SetPolicy from './components/SetPolicy.vue'
 import Board from './components/Board.vue'
+import Modals from './components/Modals.vue'
 
 export default {
   name: 'App',
@@ -33,7 +35,8 @@ export default {
     SetGame,
     MakeCaptain,
     SetPolicy,
-    Board
+    Board,
+    Modals
   },
   data() {
     return {
@@ -63,7 +66,7 @@ export default {
       this.$store.dispatch('updateHost', true)
     }
 
-    bus.$on('loadOrganisations', (data) => {
+    bus.on('loadOrganisations', (data) => {
       let organisation = params.getParam('organisation')
       if (organisation) {
         data.organisationFromUrl = organisation
@@ -102,7 +105,7 @@ export default {
       }
     })
 
-    bus.$emit('sendCheckDemoOrganisation')
+    bus.emit('sendCheckDemoOrganisation')
   },
   methods: {
   }

@@ -57,7 +57,7 @@ export default {
     },
     pullInCard() {
       if (this.canPullInCard()) {
-        bus.$emit('sendPullInCard', {organisationId: this.organisationId, teamId: this.teamId, card: this.card})
+        bus.emit('sendPullInCard', {organisationId: this.organisationId, teamId: this.teamId, card: this.card})
       }
     }
   }

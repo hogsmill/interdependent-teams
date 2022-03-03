@@ -59,10 +59,10 @@ export default {
     startGame() {
       if (this.cardsInPlay()) {
         if (confirm('Restart this game?')) {
-          bus.$emit('sendStartGame',  {organisationId: this.organisationId})
+          bus.emit('sendStartGame',  {organisationId: this.organisationId})
         }
       } else {
-        bus.$emit('sendStartGame',  {organisationId: this.organisationId})
+        bus.emit('sendStartGame',  {organisationId: this.organisationId})
       }
     }
   }

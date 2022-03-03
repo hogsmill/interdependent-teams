@@ -67,7 +67,7 @@ export default {
       if (!organisation) {
         alert('Please enter a value')
       } else {
-        bus.$emit('sendAddOrganisation', {organisation: organisation})
+        bus.emit('sendAddOrganisation', {organisation: organisation})
         document.getElementById('new-organisation').value = ''
       }
     },
@@ -76,14 +76,14 @@ export default {
       if (!organisation) {
         alert('Please enter a value')
       } else {
-        bus.$emit('sendUpdateOrganisation', {organisationId: id, organisation: organisation})
+        bus.emit('sendUpdateOrganisation', {organisationId: id, organisation: organisation})
       }
     },
     deleteOrganisation(id) {
-      bus.$emit('sendDeleteOrganisation', {organisationId: id})
+      bus.emit('sendDeleteOrganisation', {organisationId: id})
     },
     togglePolicyEnforcement(id) {
-      bus.$emit('sendTogglePolicyEnforcement', {organisationId: id})
+      bus.emit('sendTogglePolicyEnforcement', {organisationId: id})
     }
   }
 }

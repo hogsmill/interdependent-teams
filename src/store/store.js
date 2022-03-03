@@ -1,7 +1,5 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
 
-Vue.use(Vuex)
+import { createStore } from 'vuex'
 
 function selectedOrganisation(state) {
   return state.organisations.find(function(o) {
@@ -22,11 +20,14 @@ function selectedTeam(state) {
   return team
 }
 
-export const store = new Vuex.Store({
+export const store = createStore({
   state: {
     host: false,
     currentTab: 'game',
     thisGame: 'Interdependenet Teams',
+    modals: {
+      'feedback': false
+    },
     organisations: [],
     organisationId: null,
     teamId: null,
@@ -43,6 +44,9 @@ export const store = new Vuex.Store({
     },
     getThisGame: (state) => {
       return state.thisGame
+    },
+    getModals: (state) => {
+      return state.modals
     },
     getOrganisations: (state) => {
       return state.organisations
@@ -109,6 +113,16 @@ export const store = new Vuex.Store({
     updateCurrentTab: (state, payload) => {
       state.currentTab = payload
     },
+    showModal: (state, payload) => {
+      const modals = Object.keys(state.modals)
+      for (let i = 0; i < modals.length; i++) {
+        state.modals[modals[i]] = false
+      }
+      state.modals[payload] = true
+    },
+    hideModal: (state, payload) => {
+      state.modals[payload] = false
+    },
     loadOrganisations: (state, payload) => {
       state.organisations = payload
       let organisation
@@ -152,6 +166,12 @@ export const store = new Vuex.Store({
     },
     updateCurrentTab: ({ commit }, payload) => {
       commit('updateCurrentTab', payload)
+    },
+    showModal: ({ commit }, payload) => {
+      commit('showModal', payload)
+    },
+    hideModal: ({ commit }, payload) => {
+      commit('hideModal', payload)
     },
     loadOrganisations: ({ commit }, payload) => {
       commit('loadOrganisations', payload)
